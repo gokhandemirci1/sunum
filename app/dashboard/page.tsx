@@ -6,12 +6,17 @@ import DashboardClient from "@/components/DashboardClient";
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  try {
+    const session = await getServerSession(authOptions);
 
-  if (!session) {
+    if (!session) {
+      redirect("/account/login");
+    }
+
+    return <DashboardClient />;
+  } catch (error) {
+    console.error("Dashboard page error:", error);
     redirect("/account/login");
   }
-
-  return <DashboardClient />;
 }
 
