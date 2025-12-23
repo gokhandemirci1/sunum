@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -49,7 +50,20 @@ export default function RegisterPage() {
       }
 
       // Auto login after registration
-      router.push("/account/login?registered=true");
+      const signInResult = await signIn("credentials", {
+        username,
+        password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        // If auto login fails, redirect to login page
+        router.push("/account/login?registered=true");
+      } else {
+        // Successful login, redirect to dashboard
+        router.push("/dashboard");
+        router.refresh();
+      }
     } catch (err) {
       setError("Bir hata oluştu. Lütfen tekrar deneyin.");
     } finally {

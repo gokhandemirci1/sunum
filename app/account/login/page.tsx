@@ -1,16 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("registered") === "true") {
+      setSuccess("Kayıt başarılı! Giriş yapabilirsiniz.");
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +49,12 @@ export default function LoginPage() {
     <div className="row justify-content-center">
       <div className="col-md-4">
         <h2 className="text-center mb-4">Giriş Yap</h2>
+
+        {success && (
+          <div className="alert alert-success" role="alert">
+            {success}
+          </div>
+        )}
 
         {error && (
           <div className="alert alert-danger" role="alert">
