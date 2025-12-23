@@ -36,8 +36,7 @@ function LoginForm() {
       if (result?.error) {
         setError("Kullanıcı adı veya şifre hatalı.");
       } else {
-        router.push("/dashboard");
-        router.refresh();
+        window.location.href = "/dashboard";
       }
     } catch (err) {
       setError("Bir hata oluştu. Lütfen tekrar deneyin.");

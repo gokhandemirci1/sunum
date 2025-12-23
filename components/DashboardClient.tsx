@@ -54,10 +54,22 @@ export default function DashboardClient() {
 
   const loadStats = async () => {
     try {
+      const [weeklyRes, monthlyRes, sixMonthsRes] = await Promise.all([
+        fetch("/api/dashboard/stats?period=weekly"),
+        fetch("/api/dashboard/stats?period=monthly"),
+        fetch("/api/dashboard/stats?period=sixmonths"),
+      ]);
+
+      if (!weeklyRes.ok || !monthlyRes.ok || !sixMonthsRes.ok) {
+        console.error("API error:", { weeklyRes, monthlyRes, sixMonthsRes });
+        setLoading(false);
+        return;
+      }
+
       const [weekly, monthly, sixMonths] = await Promise.all([
-        fetch("/api/dashboard/stats?period=weekly").then((r) => r.json()),
-        fetch("/api/dashboard/stats?period=monthly").then((r) => r.json()),
-        fetch("/api/dashboard/stats?period=sixmonths").then((r) => r.json()),
+        weeklyRes.json(),
+        monthlyRes.json(),
+        sixMonthsRes.json(),
       ]);
 
       setStats({

@@ -58,11 +58,10 @@ export default function RegisterPage() {
 
       if (signInResult?.error) {
         // If auto login fails, redirect to login page
-        router.push("/account/login?registered=true");
+        window.location.href = "/account/login?registered=true";
       } else {
         // Successful login, redirect to dashboard
-        router.push("/dashboard");
-        router.refresh();
+        window.location.href = "/dashboard";
       }
     } catch (err) {
       setError("Bir hata oluştu. Lütfen tekrar deneyin.");
