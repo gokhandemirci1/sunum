@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique @db.VarChar(100)
+  passwordHash String    @db.VarChar(255)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  expenses     Expense[]
+  categories   Category[]
+
+  @@map("users")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  description String?   @db.VarChar(500)
+  color       String    @default("#007bff") @db.VarChar(7)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  userId      Int       @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenses    Expense[]
+
+  @@map("categories")
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  amount      Decimal  @db.Decimal(18, 2)
+  description String   @db.VarChar(500)
+  expenseDate DateTime @map("expense_date")
+  createdAt   DateTime @default(now()) @map("created_at")
+  userId      Int      @map("user_id")
+  categoryId  Int      @map("category_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([expenseDate])
+  @@index([userId, expenseDate])
+  @@map("expenses")
+}
+
